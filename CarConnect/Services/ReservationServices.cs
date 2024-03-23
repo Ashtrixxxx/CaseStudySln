@@ -11,18 +11,11 @@ namespace CarConnect.Services
 {
     public class ReservationServices
     {
-        public delegate void ReservationHandler(Object source, EventArgs e);
-        public event ReservationHandler ReservationCreated;
+        //public delegate void ReservationHandler(Object source, EventArgs e);
+        //public event ReservationHandler ReservationCreated;
         //public event EventHandler<> ReservationCreated;
 
-        protected virtual void OnReservationCreated()
-        {
-
-            if (ReservationCreated != null)
-            {
-                ReservationCreated(this, null);
-            }
-        }
+       
         AdminImpl admin = new AdminImpl();
         CustomerImp customerImp = new CustomerImp();
         public int CreateReservation(Reservation reserve)
@@ -38,7 +31,6 @@ namespace CarConnect.Services
             {
                 Console.WriteLine(ex);
             }
-            OnReservationCreated();
 
             return rows;
         }

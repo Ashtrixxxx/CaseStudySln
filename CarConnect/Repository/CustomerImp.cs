@@ -1,6 +1,7 @@
 ﻿using CarConnect.Exceptions;
 using CarConnect.Model;
 using CarConnect.Utils;
+using CarConnect.Services;
 using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -14,6 +15,12 @@ namespace CarConnect.Repository
     internal class CustomerImp : ICustomer
     {
 
+        public delegate void ReservationHandler(Object source, EventArgs e);
+        public event ReservationHandler ReservationCreated;
+        MailService mailService = new MailService();
+        // public event ReservationServices.ReservationHandler ReservationCreated;
+        
+        SmsService sms = new SmsService();
         SqlConnection sqlConnection = null;
         SqlCommand sqlCommand = null;
         public CustomerImp()
@@ -22,7 +29,16 @@ namespace CarConnect.Repository
             sqlCommand = new SqlCommand();
         }
 
+        protected virtual void OnReservationCreated()
+        {
 
+            ReservationCreated += mailService.OnReservationCreated;
+            ReservationCreated += sms.OnReservationCreated;
+            if (ReservationCreated != null)
+            {
+                ReservationCreated(this, null);
+            }
+        }
 
         public  int CreateCustomer(Customer customer)
         {
@@ -359,7 +375,7 @@ namespace CarConnect.Repository
                 sqlCommand.Parameters.AddWithValue("@end", reservation.End);
 
                 rows = sqlCommand.ExecuteNonQuery();
-
+                OnReservationCreated();
                 Console.WriteLine(rows);
             }
             catch (SqlException ex)

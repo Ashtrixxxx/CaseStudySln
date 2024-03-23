@@ -1,4 +1,5 @@
-﻿using CarConnect.Services;
+﻿using CarConnect.Repository;
+using CarConnect.Services;
 
 namespace CarConnect
 {
@@ -7,9 +8,11 @@ namespace CarConnect
 
         static void Main(string[] args)
         {
-            ReservationServices services = new ReservationServices();
+            //ReservationServices services = new ReservationServices();
             MailService mailService = new MailService();
-            services.ReservationCreated += mailService.OnReservationCreated;
+            //services.ReservationCreated += mailService.OnReservationCreated;
+            CustomerImp customerImp = new CustomerImp();
+            customerImp.ReservationCreated += mailService.OnReservationCreated;
 
             CustomerLogin customer = new CustomerLogin();
             Adminlogin adminlogin = new Adminlogin();

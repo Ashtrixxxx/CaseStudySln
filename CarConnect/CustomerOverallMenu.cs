@@ -182,6 +182,9 @@ namespace CarConnect
                             switch (reservationOption)
                             {
                                 case 1:
+
+                                   
+
                                     Reservation reserve = new Reservation();
                                     Console.WriteLine("Create Your New Reservation ");
 
@@ -208,9 +211,10 @@ namespace CarConnect
                                     reserve = new Reservation() { CustomerId= customerID, VehicleId = vehicleID, Start = start, End = expiry };
                                    int createReservationRows=  reservationServices.CreateReservation(reserve);
 
+
                                     //if (createReservationRows == 1)
                                     //OnReservationCreated();
-                                    
+
 
                                     break;
                                 case 2:
