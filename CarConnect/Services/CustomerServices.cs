@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CarConnect.Services
 {
-    internal class CustomerServices
+    public class CustomerServices
     {
         CustomerImp customerImp = new CustomerImp();
         public Customer GetDetailsByIdService(string user)
@@ -42,13 +42,14 @@ namespace CarConnect.Services
 
         //Update Functions 
         //
-        public void updateFirstName(string username, string firstName)
+        public int updateFirstName(string username, string firstName)
         {
+            int rows = 0;
             try
             {
 
 
-                customerImp.updateFirstName(username, firstName);
+               rows = customerImp.updateFirstName(username, firstName);
             }catch(SqlException sqlexp)
             {
                 Console.WriteLine(sqlexp.Message);
@@ -57,14 +58,15 @@ namespace CarConnect.Services
             {
                 Console.WriteLine(ex.Message);
             }
+            return rows;
         }
 
-        public void updateLastName(string username, string lastName)
+        public int updateLastName(string username, string lastName)
         {
-
+            int rows = 0;
             try
             {
-                customerImp.updateLastName(username, lastName);
+              rows=  customerImp.updateLastName(username, lastName);
             }
             catch(SqlException sqlexp)
             {
@@ -76,13 +78,16 @@ namespace CarConnect.Services
             {
                 Console.WriteLine(e.Message);
             }
+
+            return rows;
         }
 
-        public void updateEmail(string username, string email)
+        public int updateEmail(string username, string email)
         {
+            int rows = 0;
             try
             {
-                customerImp.updateEmail(username, email);
+               rows= customerImp.updateEmail(username, email);
             }
             
             catch(SqlException sqlexp)
@@ -93,13 +98,15 @@ namespace CarConnect.Services
             {
                 Console.WriteLine(ex.Message);
             }
+            return rows;
         }
 
-        public void updatePhone(string username, string phone)
+        public int updatePhone(string username, string phone)
         {
+            int rows = 0;
             try
             {
-                customerImp.updatePhone(username, phone);
+             rows=    customerImp.updatePhone(username, phone);
             }
             catch(SqlException sqlexp)
             {
@@ -109,10 +116,14 @@ namespace CarConnect.Services
             {
                 Console.WriteLine(ex.Message);
             }
+
+            return rows;
         }
 
-        public void updateUserName(string username, string userName)
+        public int updateUserName(string username, string userName)
         {
+
+            int rows = 0;
             try
             {
                 customerImp.updateUsername(username, userName);
@@ -125,18 +136,24 @@ namespace CarConnect.Services
             {
                 Console.WriteLine(ex.Message);
             }
+
+            return rows;
         }
 
-        public void updatePassword(string username, string password)
+        public int updatePassword(string username, string password)
         {
+
+            int rows = 0;
             try
             {
-                customerImp.updatePassword(username, password);
+               rows =  customerImp.updatePassword(username, password);
             }
             catch(SqlException sqlexp)
             {
                 Console.WriteLine(sqlexp.Message);
             }
+
+            return rows;
         }
 
 

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CarConnect.Services
 {
-    internal class AuthenticationServices
+    public class AuthenticationServices
     {
         AuthenticationImpl authenticationImpl = new AuthenticationImpl();
         public bool Login(string username, string password)

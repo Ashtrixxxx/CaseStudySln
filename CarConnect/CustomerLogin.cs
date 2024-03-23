@@ -4,6 +4,7 @@ using CarConnect.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,6 +18,27 @@ namespace CarConnect
         CustomerImp customerImp = new CustomerImp();
         CustomerServices customerServices = new CustomerServices();
         CustomerOverallMenu customerMenu   = new CustomerOverallMenu();
+
+        public bool IsPhoneNumberValid(string phoneNumber)
+        {
+            if(phoneNumber.Length == 10) {
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool IsEmailValid(string email)
+        {
+
+            if(!email.Contains("@"))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public void Customer()
         {
             while(true)
@@ -44,7 +66,7 @@ namespace CarConnect
                         }
                         else
                         {
-                            Console.WriteLine("The username or password You entered is incorrect");
+                            //Console.WriteLine("The username or password You entered is incorrect");
                             break;
                         }
 
@@ -75,11 +97,28 @@ namespace CarConnect
                         Console.WriteLine("Confirm Your Password");
                         string cnfmPassword = Console.ReadLine();
 
+                        
+
                         DateTime date = DateTime.Now;
-                        if(newPassword.Equals(cnfmPassword))
+
+                        if (!IsPhoneNumberValid(phone))
+                        {
+                            break;
+                        }
+
+                        if(!IsEmailValid(email))
+                        {
+                            break;
+                        }
+
+                        if (newPassword.Equals(cnfmPassword) )
                         {
                             customer = new Customer() { FirstName = frst, LastName = last, Email = email, Phone = phone, UserName = username, Password = newPassword, RegistrationDate = date, Address = address };
-                            customerServices.CreateCustomerService(customer);
+                            int rows = customerServices.CreateCustomerService(customer);
+                            if(rows == 1) {
+                                customerMenu.OverallMenu(username);
+
+                            }
                             break;
                         }
 

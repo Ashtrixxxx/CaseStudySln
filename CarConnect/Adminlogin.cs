@@ -1,4 +1,5 @@
-﻿using CarConnect.Model;
+﻿using CarConnect.Exceptions;
+using CarConnect.Model;
 using CarConnect.Repository;
 using CarConnect.Services;
 using System;
@@ -16,6 +17,8 @@ namespace CarConnect
         CustomerImp customerImp = new CustomerImp();
         AdminImpl adminImpl = new AdminImpl();
         AdminOverallMenu adminOverallMenu = new AdminOverallMenu();
+
+        CustomerLogin customerLogin = new CustomerLogin();
         public void Admin()
         {
             while (true)
@@ -43,7 +46,8 @@ namespace CarConnect
                         }
                         else
                         {
-                            Console.WriteLine("The username or password You entered is incorrect");
+                            AdminNotFoundException.AdminNotFound();
+                            //Console.WriteLine("The username or password You entered is incorrect");
                             break;
                         }
 
@@ -72,6 +76,17 @@ namespace CarConnect
                         string role = Console.ReadLine();
 
                         DateTime date = DateTime.Now;
+
+
+                        if(!customerLogin.IsEmailValid(email))
+                        {
+                            break;
+                        }
+
+                        if(!customerLogin.IsPhoneNumberValid(phone)) {
+                            break;
+                        }
+
                         adminClass = new Admin() { FirstName = frst, LastName = last, Email = email, PhoneNumber = phone, Username = username, Password = newPassword,Role= role ,JoinDate = date };
                         adminImpl.CreateAdmin(adminClass);
                         break;

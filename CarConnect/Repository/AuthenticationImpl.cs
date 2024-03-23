@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CarConnect.Exceptions;
 using CarConnect.Utils;
 using Microsoft.Data.SqlClient;
 
@@ -34,15 +35,21 @@ namespace CarConnect.Repository
                 {
                     return true;
                 }
+                else
+                {
+                    AuthenticationException.CheckIfAuthenticated();
+                }
 
 
-            }catch (SqlException ex)
+            }catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
             finally
             {
                 _connection.Close();
+                _command.Parameters.Clear();
+
             }
 
             return false;
@@ -59,6 +66,7 @@ namespace CarConnect.Repository
                 _command.Parameters.AddWithValue("@username", username);
                 _command.Parameters.AddWithValue("@password", password);
                 SqlDataReader reader = _command.ExecuteReader();
+
                 if (reader.Read())
                 {
                     return true;
@@ -73,6 +81,8 @@ namespace CarConnect.Repository
             finally
             {
                 _connection.Close();
+                _command.Parameters.Clear();
+
             }
 
             return false;

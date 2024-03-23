@@ -1,6 +1,8 @@
-﻿using CarConnect.Model;
+﻿using CarConnect.Exceptions;
+using CarConnect.Model;
 using CarConnect.Utils;
 using Microsoft.Data.SqlClient;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace CarConnect.Repository
 {
-    internal class CustomerImp: ICustomer
+    internal class CustomerImp : ICustomer
     {
 
         SqlConnection sqlConnection = null;
@@ -31,14 +33,14 @@ namespace CarConnect.Repository
                 sqlCommand.CommandText = "INSERT INTO Customer ( FirstName, LastName, Email, PhoneNumber, [Address], Username, [Password], RegistrationDate) values (@first,@last,@email,@phone,@address,@username,@password,@registrationDate)";
                 sqlConnection.Open();
                 sqlCommand.Parameters.AddWithValue("@first", customer.FirstName);
-                sqlCommand.Parameters.AddWithValue("@last",customer.LastName);
+                sqlCommand.Parameters.AddWithValue("@last", customer.LastName);
                 sqlCommand.Parameters.AddWithValue("@email", customer.Email);
                 sqlCommand.Parameters.AddWithValue("@phone", customer.Phone);
                 sqlCommand.Parameters.AddWithValue("@username", customer.UserName);
                 sqlCommand.Parameters.AddWithValue("@password", customer.Password);
                 sqlCommand.Parameters.AddWithValue("@registrationDate", customer.RegistrationDate);
                 sqlCommand.Parameters.AddWithValue("@address", customer.Address);
-                 rows = sqlCommand.ExecuteNonQuery();
+                rows = sqlCommand.ExecuteNonQuery();
 
                 Console.WriteLine(rows);
             }
@@ -56,7 +58,7 @@ namespace CarConnect.Repository
         public Customer GetCustomerDetailsByUsername(string username)
         {
             Customer customer = new Customer();
-           // List<Customer> customerDetails = new List<Customer>();
+            // List<Customer> customerDetails = new List<Customer>();
             try
             {
                 sqlCommand.Connection = sqlConnection;
@@ -64,8 +66,9 @@ namespace CarConnect.Repository
                 sqlConnection.Open();
                 sqlCommand.Parameters.AddWithValue("@username", username);
 
-                SqlDataReader reader= sqlCommand.ExecuteReader();
-                while (reader.Read()) {
+                SqlDataReader reader = sqlCommand.ExecuteReader();
+                while (reader.Read())
+                {
                     customer.CustomerId = (int)reader["CustomerID"];
                     customer.FirstName = (string)reader["FirstName"];
                     customer.LastName = (string)reader["LastName"];
@@ -77,13 +80,14 @@ namespace CarConnect.Repository
 
                 }
                 //customerDetails.Add(customer);
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
 
             return customer;
-        } 
+        }
 
         public Customer GetCustomerDetailsById(string user)
         {
@@ -122,9 +126,9 @@ namespace CarConnect.Repository
 
         // Update Implementations
 
-        public void updateFirstName(string username, string name)
+        public int updateFirstName(string username, string name)
         {
-            
+
             sqlCommand.Connection = sqlConnection;
             sqlCommand.CommandText = "Update Customer set FirstName = @name where Username = @username";
             sqlConnection.Open();
@@ -132,30 +136,31 @@ namespace CarConnect.Repository
             sqlCommand.Parameters.AddWithValue("@username", username);
             int rows = sqlCommand.ExecuteNonQuery();
 
+            return rows;
 
         }
 
-        public void updateLastName (string username, string lastName)
+        public int updateLastName(string username, string lastName)
         {
             sqlCommand.Connection = sqlConnection;
             sqlCommand.CommandText = "Update Customer set LastName = @lastName where Username = @username";
             sqlConnection.Open();
 
             int rows = sqlCommand.ExecuteNonQuery();
-
+            return rows;
         }
 
-        public void updateEmail(string username, string email)
+        public int updateEmail(string username, string email)
         {
             sqlCommand.Connection = sqlConnection;
             sqlCommand.CommandText = "Update Customer set Email = @email where Username = @username";
             sqlConnection.Open();
 
             int rows = sqlCommand.ExecuteNonQuery();
-
+            return rows;
         }
 
-        public void updatePhone(string username, string phone)
+        public int updatePhone(string username, string phone)
         {
             sqlCommand.Connection = sqlConnection;
             sqlCommand.CommandText = "Update Customer set PhoneNumber = @phone where Username = @username";
@@ -164,10 +169,13 @@ namespace CarConnect.Repository
             sqlCommand.Parameters.AddWithValue("@username", username);
             int rows = sqlCommand.ExecuteNonQuery();
 
+            return rows;
+
         }
 
 
-        public void updateUsername(string username,string newUser) {
+        public int updateUsername(string username, string newUser)
+        {
 
             sqlCommand.Connection = sqlConnection;
             sqlCommand.CommandText = "Update Customer set Username = @newUser where Username = @username";
@@ -175,9 +183,11 @@ namespace CarConnect.Repository
             sqlCommand.Parameters.AddWithValue("@newUser", newUser);
             sqlCommand.Parameters.AddWithValue("@username", username);
             int rows = sqlCommand.ExecuteNonQuery();
+
+            return rows;
         }
 
-        public void updatePassword(string username, string password)
+        public int updatePassword(string username, string password)
         {
             sqlCommand.Connection = sqlConnection;
             sqlCommand.CommandText = "Update Customer set Password = @name where Username = @username";
@@ -186,15 +196,19 @@ namespace CarConnect.Repository
             sqlCommand.Parameters.AddWithValue("@username", username);
             int rows = sqlCommand.ExecuteNonQuery();
 
+            return rows;
+
         }
 
         //Vehicle Operations Done by the customer
 
-        public Vehicle getVehicleDetailsById(int vehicleId) {
-        
+        public Vehicle getVehicleDetailsById(int vehicleId)
+        {
+
             Vehicle vehicle = new Vehicle();
             try
             {
+                int rows = 0;
                 sqlCommand.Connection = sqlConnection;
                 sqlCommand.CommandText = "select * from VEHICLE where VehicleId = @id";
                 sqlConnection.Open();
@@ -211,7 +225,9 @@ namespace CarConnect.Repository
                     vehicle.RegistrationNumber = (int)(reader["RegistrationNumber"]);
                     vehicle.Availability = (int)(reader["Availability"]);
                     vehicle.DailyRate = (double)((decimal)reader["DailyRate"]);
+                    rows = 1;
                 }
+                VehicleNotFound.CheckIfVehicleFound(rows);
                 //customerDetails.Add(customer);
             }
             catch (Exception ex)
@@ -222,8 +238,9 @@ namespace CarConnect.Repository
             return vehicle;
         }
 
-        public List<Vehicle> DisplayAvailableVehicles() {
-        
+        public List<Vehicle> DisplayAvailableVehicles()
+        {
+
             List<Vehicle> vehicles = new List<Vehicle>();
 
             Vehicle vehicle = new Vehicle();
@@ -232,7 +249,7 @@ namespace CarConnect.Repository
                 sqlCommand.Connection = sqlConnection;
                 sqlCommand.CommandText = "select * from VEHICLE where Availability = 1";
                 sqlConnection.Open();
-                
+
 
                 SqlDataReader reader = sqlCommand.ExecuteReader();
                 while (reader.Read())
@@ -248,6 +265,59 @@ namespace CarConnect.Repository
 
                     vehicles.Add(vehicle);
 
+                }
+
+                if(vehicles.IsNullOrEmpty())
+                {
+                    throw new VehicleNotFound("The vehicles are not available");
+                }
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.StackTrace);
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                sqlConnection.Close();
+            }
+
+            return vehicles;
+        }
+
+        public List<Vehicle> DisplayAllVehicles()
+        {
+
+            List<Vehicle> vehicles = new List<Vehicle>();
+
+            Vehicle vehicle = new Vehicle();
+            try
+            {
+                sqlCommand.Connection = sqlConnection;
+                sqlCommand.CommandText = "select * from VEHICLE";
+                sqlConnection.Open();
+
+
+                SqlDataReader reader = sqlCommand.ExecuteReader();
+                while (reader.Read())
+                {
+                    vehicle.VehicleId = (int)reader["VehicleID"];
+                    vehicle.Make = (string)reader["Make"];
+                    vehicle.Model = (string)reader["Model"];
+                    vehicle.Year = (int)reader["Year"];
+                    vehicle.VehicleColor = (string)reader["Color"];
+                    vehicle.RegistrationNumber = (int)reader["RegistrationNumber"];
+                    vehicle.Availability = Convert.ToInt32(reader["Availability"]);
+                    vehicle.DailyRate = (double)((decimal)reader["DailyRate"]);
+
+                    vehicles.Add(vehicle);
+
+                }
+
+                if (vehicles.IsNullOrEmpty())
+                {
+                    throw new VehicleNotFound("The vehicles are not available");
                 }
             }
 
@@ -266,18 +336,28 @@ namespace CarConnect.Repository
 
         //Reservation Services made by Customer
 
-        public int CreateReservation(Reservation reservation) {
+        public int CreateReservation(Reservation reservation)
+        {
             int rows = 0;
             try
             {
+
+                sqlCommand.CommandText = @"
+                IF NOT EXISTS (SELECT 1 FROM ReservationTable WHERE VehicleId = @VehicleId)
+                BEGIN
+                INSERT INTO ReservationTable (CustomerId, VehicleId, StartDate, EndDate) VALUES (@customerId, @vehicleId, @start, @end)
+                END";
+
+
+
                 sqlCommand.Connection = sqlConnection;
-                sqlCommand.CommandText = "INSERT INTO ReservationTable ( CustomerId, VehicleId, StartDate, EndDate) values (@customerId,@vehicleid,@start,@end)";
+                //sqlCommand.CommandText = "INSERT INTO ReservationTable ( CustomerId, VehicleId, StartDate, EndDate) values (@customerId,@vehicleId,@start,@end)";
                 sqlConnection.Open();
                 sqlCommand.Parameters.AddWithValue("@customerId", reservation.CustomerId);
-                sqlCommand.Parameters.AddWithValue("@vehicleId",reservation.VehicleId);
-                sqlCommand.Parameters.AddWithValue("@start",reservation.Start);
-                sqlCommand.Parameters.AddWithValue("@end",reservation.End);
-                
+                sqlCommand.Parameters.AddWithValue("@vehicleId", reservation.VehicleId);
+                sqlCommand.Parameters.AddWithValue("@start", reservation.Start);
+                sqlCommand.Parameters.AddWithValue("@end", reservation.End);
+
                 rows = sqlCommand.ExecuteNonQuery();
 
                 Console.WriteLine(rows);
@@ -310,7 +390,8 @@ namespace CarConnect.Repository
                     id = Convert.ToInt32(r["CustomerID"]);
                 }
 
-            }catch(SqlException sqlexx)
+            }
+            catch (SqlException sqlexx)
             {
                 Console.WriteLine(sqlexx.StackTrace);
             }
@@ -376,12 +457,12 @@ namespace CarConnect.Repository
                 Console.WriteLine(ex.Message);
             }
             sqlConnection.Close();
-            
-                return reservation;
-            
+
+            return reservation;
+
         }
 
-        public int DeleteReservation(string user,int customerId)
+        public int DeleteReservation(string user, int customerId)
         {
             int id = 0;
             int rows = 0;
@@ -409,11 +490,12 @@ namespace CarConnect.Repository
                 sqlCommand.CommandText = "delete from ReservationTable where ReservationID = @reservationID and CustomerID = @customerId";
                 sqlConnection.Open();
                 sqlCommand.Parameters.AddWithValue("@customerId", id);
-                 rows = sqlCommand.ExecuteNonQuery();
+                rows = sqlCommand.ExecuteNonQuery();
 
 
 
-            }catch(SqlException sqlex)
+            }
+            catch (SqlException sqlex)
             {
                 Console.WriteLine(sqlex.Message);
             }
@@ -427,6 +509,6 @@ namespace CarConnect.Repository
 
     }
 
-    
+
 
 }

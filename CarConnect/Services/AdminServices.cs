@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CarConnect.Services
 {
-    internal class AdminServices
+    public class AdminServices
     {
         AdminImpl adminImpl = new AdminImpl();
         public List<Customer> GetCustomers()

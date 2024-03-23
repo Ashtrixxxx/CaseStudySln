@@ -1,4 +1,5 @@
-﻿using CarConnect.Model;
+﻿using CarConnect.Exceptions;
+using CarConnect.Model;
 using CarConnect.Services;
 using System;
 using System.Collections.Generic;
@@ -27,13 +28,16 @@ namespace CarConnect
             AdminServices adminServices = new AdminServices();
             UpdateVehicle updateVehicle = new UpdateVehicle();
             UpdateAdmin updateAdmin = new UpdateAdmin();
+            AdminUpdateReservation updateReservation = new AdminUpdateReservation();
             while (true)
+
             {
                 Console.WriteLine("Welcome, Admin");
                 Console.WriteLine("1 .Get All the Customers");
                 Console.WriteLine("2. Add a New Vehicle");
                 Console.WriteLine("3. Update Vehicle");
                 Console.WriteLine("4. Update Admin Details");
+                Console.WriteLine("5. Update Reservation status");
                 Console.WriteLine("Enter your option:");
                 int option = Convert.ToInt32(Console.ReadLine());
                 
@@ -57,11 +61,17 @@ namespace CarConnect
                         Console.WriteLine("Enter the model name");
                         string model = Console.ReadLine();
                         Console.WriteLine("Enter the year ");
-                        int year = Convert.ToInt32(Console.ReadLine());
+                        string refyear = Console.ReadLine();
+                        int year = 0;
+                        InvalidInputException.CheckIfInteger(refyear, ref year);
+
                         Console.WriteLine("Enter the color of the vehicle");
                         string color = Console.ReadLine();
                         Console.WriteLine("Enter your registration Number");
-                        int registrationNumber = Convert.ToInt32(Console.ReadLine());
+                        string refRegistrationNumber = Console.ReadLine();
+                        int registrationNumber = 0;
+                        InvalidInputException.CheckIfInteger(refRegistrationNumber, ref registrationNumber );
+
                         Console.WriteLine("Set Availability ...");
                         Console.WriteLine("Press 1 for Active . 0 for Inactive");
                         int avail = Convert.ToInt32(Console.ReadLine());
@@ -83,13 +93,16 @@ namespace CarConnect
                         double dailyRate = Convert.ToDouble(Console.ReadLine());
 
                         vehicle = new Vehicle() {Make = make , Model = model, Year = year, VehicleColor= color, Availability = availability, RegistrationNumber = registrationNumber, DailyRate = dailyRate };
-                        vehicleServices.CreateVehicle(vehicle);
+                        int rows = vehicleServices.CreateVehicle(vehicle);
                         break;
                     case 3:
                         updateVehicle.VehicleUpdate();
                         break;
                     case 4:
                         updateAdmin.AdminUpdate();
+                        break;
+                    case 5:
+                        updateReservation.AdminReservationUpdate();
                         break;
                     default:
                         break;

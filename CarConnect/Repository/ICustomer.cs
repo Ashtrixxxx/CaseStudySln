@@ -14,7 +14,7 @@ namespace CarConnect.Repository
 
         int CreateCustomer(Customer customer);
 
-        Customer GetCustomerDetailsById(string user);
+       public Customer GetCustomerDetailsById(string user);
 
         Customer GetCustomerDetailsByUsername(string username);
 

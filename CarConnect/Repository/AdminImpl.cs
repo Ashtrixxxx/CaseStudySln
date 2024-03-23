@@ -1,4 +1,5 @@
-﻿using CarConnect.Model;
+﻿using CarConnect.Exceptions;
+using CarConnect.Model;
 using CarConnect.Utils;
 using Microsoft.Data.SqlClient;
 using System;
@@ -88,8 +89,13 @@ namespace CarConnect.Repository
 
 
             sqlConnection.Open();
+            rows = sqlCommand.ExecuteNonQuery();
+            sqlConnection.Close();
+            sqlCommand.Parameters.Clear();
 
-            return rows = sqlCommand.ExecuteNonQuery();
+            VehicleNotFound.CheckIfVehicleFound(rows);
+
+            return rows;
 
         }
         public int updateModel(string Model, int id)
@@ -101,7 +107,13 @@ namespace CarConnect.Repository
             sqlCommand.Parameters.AddWithValue("@id", id);
             sqlConnection.Open();
 
-            return rows = sqlCommand.ExecuteNonQuery();
+            rows = sqlCommand.ExecuteNonQuery();
+            sqlConnection.Close();
+            sqlCommand.Parameters.Clear();
+
+            VehicleNotFound.CheckIfVehicleFound(rows);
+
+            return rows ;
 
         }
         public int updateYear(int year, int id)
@@ -113,7 +125,13 @@ namespace CarConnect.Repository
             sqlCommand.Parameters.AddWithValue("@id", id);
             sqlConnection.Open();
 
-            return rows = sqlCommand.ExecuteNonQuery();
+            rows = sqlCommand.ExecuteNonQuery();
+            sqlConnection.Close();
+            sqlCommand.Parameters.Clear();
+
+            VehicleNotFound.CheckIfVehicleFound(rows);
+
+            return rows ;
 
         }
         public int updateColor(string color, int id)
@@ -125,8 +143,13 @@ namespace CarConnect.Repository
             sqlCommand.Parameters.AddWithValue("@VehicleID", id);
             sqlConnection.Open();
 
+            rows = sqlCommand.ExecuteNonQuery();
+            sqlConnection.Close();
+            sqlCommand.Parameters.Clear();
 
-            return rows = sqlCommand.ExecuteNonQuery();
+            VehicleNotFound.CheckIfVehicleFound(rows);
+
+            return rows;
 
         }
         public int updateAvailability(int avail, int id)
@@ -138,7 +161,13 @@ namespace CarConnect.Repository
             sqlCommand.Parameters.AddWithValue("@id", id);
             sqlConnection.Open();
 
-            return rows = sqlCommand.ExecuteNonQuery();
+            rows = sqlCommand.ExecuteNonQuery();
+            sqlConnection.Close();
+            sqlCommand.Parameters.Clear();
+
+            VehicleNotFound.CheckIfVehicleFound(rows);
+
+            return rows;
 
         }
         public int updateDailyRate(double dailyRate, int id)
@@ -150,7 +179,13 @@ namespace CarConnect.Repository
             sqlCommand.Parameters.AddWithValue("@id", id);
             sqlConnection.Open();
 
-            return rows = sqlCommand.ExecuteNonQuery();
+            rows = sqlCommand.ExecuteNonQuery();
+            sqlConnection.Close();
+            sqlCommand.Parameters.Clear();
+
+            VehicleNotFound.CheckIfVehicleFound(rows);
+
+            return rows;
 
         }
 
@@ -163,7 +198,14 @@ namespace CarConnect.Repository
             sqlCommand.Parameters.AddWithValue("@id", id);
             sqlConnection.Open();
 
-            return rows = sqlCommand.ExecuteNonQuery();
+
+            rows = sqlCommand.ExecuteNonQuery();
+            sqlConnection.Close();
+            sqlCommand.Parameters.Clear();
+
+            VehicleNotFound.CheckIfVehicleFound(rows);
+
+            return rows;
         }
 
         public List<Customer> GetCustomers()
@@ -194,7 +236,7 @@ namespace CarConnect.Repository
                 }
 
             }
-            catch (Exception ex)
+            catch (SqlException ex)
             {
                 Console.WriteLine(ex.Message);
             }
@@ -216,7 +258,7 @@ namespace CarConnect.Repository
                 rows = sqlCommand.ExecuteNonQuery();
                 
             }
-            catch(Exception ex)
+            catch(SqlException ex)
             {
                 Console.WriteLine(ex.Message);
             }
@@ -242,7 +284,7 @@ namespace CarConnect.Repository
                 rows = sqlCommand.ExecuteNonQuery();
 
             }
-            catch (Exception ex)
+            catch (SqlException ex)
             {
                 Console.WriteLine(ex.Message);
             }
@@ -267,7 +309,7 @@ namespace CarConnect.Repository
                 rows = sqlCommand.ExecuteNonQuery();
 
             }
-            catch (Exception ex)
+            catch (SqlException ex)
             {
                 Console.WriteLine(ex.Message);
             }
@@ -292,7 +334,7 @@ namespace CarConnect.Repository
                 rows = sqlCommand.ExecuteNonQuery();
 
             }
-            catch (Exception ex)
+            catch (SqlException ex)
             {
                 Console.WriteLine(ex.Message);
             }
@@ -317,7 +359,7 @@ namespace CarConnect.Repository
                 rows = sqlCommand.ExecuteNonQuery();
 
             }
-            catch (Exception ex)
+            catch (SqlException ex)
             {
                 Console.WriteLine(ex.Message);
             }
@@ -342,7 +384,7 @@ namespace CarConnect.Repository
                 rows = sqlCommand.ExecuteNonQuery();
 
             }
-            catch (Exception ex)
+            catch (SqlException ex)
             {
                 Console.WriteLine(ex.Message);
             }
@@ -368,7 +410,7 @@ namespace CarConnect.Repository
                 rows = sqlCommand.ExecuteNonQuery();
 
             }
-            catch (Exception ex)
+            catch (SqlException ex)
             {
                 Console.WriteLine(ex.Message);
             }
@@ -378,6 +420,30 @@ namespace CarConnect.Repository
             }
             return rows;
         }
+        public int UpdateReservationStatus(int reservationStatus, int id    )
+        {
+            int rows = 0;
+            try
+            {
+                sqlCommand.Connection = sqlConnection;
+                sqlCommand.CommandText = "update ReservationTable set Status = @status where ReservationID = @id";
+                sqlCommand.Parameters.AddWithValue("@status", reservationStatus);
+                sqlCommand.Parameters.AddWithValue("@id", id);
 
+                sqlConnection.Open();
+                 rows = sqlCommand.ExecuteNonQuery();
+
+
+
+            }catch(SqlException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                sqlConnection.Close();
+            }
+            return rows;
+        }
     }
 }

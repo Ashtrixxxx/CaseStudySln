@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CarConnect.Services
 {
-    internal class VehicleServices
+    public class VehicleServices
     {
         AdminImpl adminImpl = new AdminImpl();
         CustomerImp customerImp = new CustomerImp();
@@ -25,6 +25,12 @@ namespace CarConnect.Services
         public int CreateVehicle(Vehicle vehicle)
         {
             return adminImpl.CreateVehicle(vehicle);
+        }
+
+
+        public List <Vehicle> GetAllVehicles() {
+        
+            return customerImp.DisplayAllVehicles();
         }
 
     }

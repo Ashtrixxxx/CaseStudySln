@@ -1,4 +1,5 @@
-﻿using CarConnect.Model;
+﻿using CarConnect.Exceptions;
+using CarConnect.Model;
 using CarConnect.Services;
 using System;
 using System.Collections.Generic;
@@ -14,18 +15,7 @@ namespace CarConnect
         CustomerServices customerServices = new CustomerServices();
         VehicleServices vehicleServices = new VehicleServices();
         ReservationServices reservationServices = new ReservationServices();
-        public delegate void ReservationHandler (Object source, EventArgs e);
-        public event ReservationHandler ReservationCreated;
-        //public event EventHandler<> ReservationCreated;
-
-        protected virtual void OnReservationCreated()
-        {
-            if (ReservationCreated != null)
-            {
-                ReservationCreated(this, null);
-            }
-        }
-
+        
         public void OverallMenu(string user)
         {
         MainMenu: while (true)
@@ -73,7 +63,7 @@ namespace CarConnect
 
                                         Console.WriteLine("1. Update First Name");
                                         Console.WriteLine("2. Update Last Name");
-                                        Console.WriteLine("3. Update emai");
+                                        Console.WriteLine("3. Update email");
                                         Console.WriteLine("4. Update phone number");
                                         Console.WriteLine("5. Update username");
                                         Console.WriteLine("6. Update password");
@@ -154,8 +144,12 @@ namespace CarConnect
                             {
                                 case 1:
                                     Console.WriteLine("Enter The vehicle ID");
-                                    int vehicleId = Convert.ToInt32(Console.ReadLine());
-                                    Vehicle vehicle = vehicleServices.getVehicleDetailsById(vehicleId);
+                                    string refVehicleId = Console.ReadLine();
+                                    int vehicleID = 0;
+                                    InvalidInputException.CheckIfInteger(refVehicleId, ref vehicleID);
+
+
+                                    Vehicle vehicle = vehicleServices.getVehicleDetailsById(vehicleID);
                                     Console.WriteLine(vehicle);
                                     break;
                                 case 2:
@@ -195,19 +189,27 @@ namespace CarConnect
 
 
                                     Console.WriteLine("Enter your Id:");
-                                    int customerId = Convert.ToInt32(Console.ReadLine());
+                                    string refCustomerId =Console.ReadLine();
+                                    int customerID = 0;
+                                    InvalidInputException.CheckIfInteger(refCustomerId, ref customerID);
+
+
                                     Console.WriteLine("Enter The vehicle Id you want to rent");
-                                    int vehicleId = Convert.ToInt32(Console.ReadLine());
-                                    
+                                    string refVehicleId = Console.ReadLine();
+                                    int vehicleID = 0;
+                                    //int vehicleId = Convert.ToInt32(Console.ReadLine());
+                                    InvalidInputException.CheckIfInteger(refVehicleId, ref vehicleID);
+
+
                                     Console.WriteLine("Enter Expiry Date");
                                     DateTime expiry = Convert.ToDateTime(Console.ReadLine());
                                     
                                     DateTime start = DateTime.Now;
-                                    reserve = new Reservation() { CustomerId= customerId, VehicleId = vehicleId, Start = start, End = expiry };
+                                    reserve = new Reservation() { CustomerId= customerID, VehicleId = vehicleID, Start = start, End = expiry };
                                    int createReservationRows=  reservationServices.CreateReservation(reserve);
 
-                                    if (createReservationRows == 1)
-                                    OnReservationCreated();
+                                    //if (createReservationRows == 1)
+                                    //OnReservationCreated();
                                     
 
                                     break;
@@ -225,9 +227,12 @@ namespace CarConnect
                                     break;
                                 case 3:
                                     Console.WriteLine("Enter Your resevation Id");
-                                    int reservationId = Convert.ToInt32(Console.ReadLine());
+                                    string refReservationId = Console.ReadLine();
+                                    int reservationID = 0;
+                                    InvalidInputException.CheckIfInteger(refReservationId, ref reservationID);
+
                                     Reservation reserveDetails = new Reservation();
-                                    reserveDetails = reservationServices.GetReservation(reservationId);
+                                    reserveDetails = reservationServices.GetReservation(reservationID);
                                     Console.WriteLine(reserveDetails);
                                     break;
                                 case 4:

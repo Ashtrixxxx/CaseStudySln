@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CarConnect.Model
 {
-    internal class Admin
+    public class Admin
     {
 
         public Admin() { }

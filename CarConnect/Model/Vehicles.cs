@@ -8,7 +8,7 @@ using System.Xml;
 
 namespace CarConnect.Model
 {
-    internal class Vehicle
+    public class Vehicle
     {
         public int VehicleId { get; set; }
         public string Make { get; set; }

@@ -8,7 +8,7 @@ using System.Xml;
 
 namespace CarConnect.Model
 {
-    internal class Reservation
+    public class Reservation
     {
         //        ervation Table:
         //• ReservationID(Primary Key) : Unique identifier for each reservation.

@@ -1,14 +1,15 @@
-﻿namespace CarConnect
+﻿using CarConnect.Services;
+
+namespace CarConnect
 {
     internal class Program
     {
 
         static void Main(string[] args)
         {
-
-            CustomerOverallMenu customerOverallMenu = new CustomerOverallMenu();
+            ReservationServices services = new ReservationServices();
             MailService mailService = new MailService();
-            customerOverallMenu.ReservationCreated += mailService.OnReservationCreated;
+            services.ReservationCreated += mailService.OnReservationCreated;
 
             CustomerLogin customer = new CustomerLogin();
             Adminlogin adminlogin = new Adminlogin();

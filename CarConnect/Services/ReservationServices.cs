@@ -1,4 +1,5 @@
-﻿using CarConnect.Model;
+﻿using CarConnect.Exceptions;
+using CarConnect.Model;
 using CarConnect.Repository;
 using System;
 using System.Collections.Generic;
@@ -8,8 +9,21 @@ using System.Threading.Tasks;
 
 namespace CarConnect.Services
 {
-    internal class ReservationServices
+    public class ReservationServices
     {
+        public delegate void ReservationHandler(Object source, EventArgs e);
+        public event ReservationHandler ReservationCreated;
+        //public event EventHandler<> ReservationCreated;
+
+        protected virtual void OnReservationCreated()
+        {
+
+            if (ReservationCreated != null)
+            {
+                ReservationCreated(this, null);
+            }
+        }
+        AdminImpl admin = new AdminImpl();
         CustomerImp customerImp = new CustomerImp();
         public int CreateReservation(Reservation reserve)
         {
@@ -17,11 +31,15 @@ namespace CarConnect.Services
             try
             {
                rows = customerImp.CreateReservation(reserve);
+                ReservationException.CheckIfVehicleInUse(rows);
+
             }
             catch(Exception ex)
             {
                 Console.WriteLine(ex);
             }
+            OnReservationCreated();
+
             return rows;
         }
 
@@ -41,6 +59,13 @@ namespace CarConnect.Services
             
             return customerImp.DeleteReservation(user,customerId);
         }
+
+        public int UpdateReservationStatus(int status, int id)
+        {
+
+
+            return admin.UpdateReservationStatus(status, id); 
+                }
 
     }
 }
