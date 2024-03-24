@@ -143,14 +143,21 @@ namespace CarConnect
                             switch (vehicleOption)
                             {
                                 case 1:
-                                    Console.WriteLine("Enter The vehicle ID");
-                                    string refVehicleId = Console.ReadLine();
-                                    int vehicleID = 0;
-                                    InvalidInputException.CheckIfInteger(refVehicleId, ref vehicleID);
+                                    try
+                                    {
+                                        Console.WriteLine("Enter The vehicle ID");
+                                        string refVehicleId = Console.ReadLine();
+                                        int vehicleID = 0;
+                                        InvalidInputException.CheckIfInteger(refVehicleId, ref vehicleID);
 
 
-                                    Vehicle vehicle = vehicleServices.getVehicleDetailsById(vehicleID);
-                                    Console.WriteLine(vehicle);
+                                        Vehicle vehicle = vehicleServices.getVehicleDetailsById(vehicleID);
+                                        Console.WriteLine(vehicle);
+                                    }
+                                    catch   (Exception ex)
+                                    {
+                                        Console.WriteLine(ex.Message);
+                                    }
                                     break;
                                 case 2:
                                     Console.WriteLine("Displayin all the Available vehicles");
@@ -182,39 +189,44 @@ namespace CarConnect
                             switch (reservationOption)
                             {
                                 case 1:
-
-                                   
-
-                                    Reservation reserve = new Reservation();
-                                    Console.WriteLine("Create Your New Reservation ");
-
-                                    Console.WriteLine("Enter your details:");
+                                    try
+                                    {
 
 
-                                    Console.WriteLine("Enter your Id:");
-                                    string refCustomerId =Console.ReadLine();
-                                    int customerID = 0;
-                                    InvalidInputException.CheckIfInteger(refCustomerId, ref customerID);
+                                        Reservation reserve = new Reservation();
+                                        Console.WriteLine("Create Your New Reservation ");
+
+                                        Console.WriteLine("Enter your details:");
 
 
-                                    Console.WriteLine("Enter The vehicle Id you want to rent");
-                                    string refVehicleId = Console.ReadLine();
-                                    int vehicleID = 0;
-                                    //int vehicleId = Convert.ToInt32(Console.ReadLine());
-                                    InvalidInputException.CheckIfInteger(refVehicleId, ref vehicleID);
+                                        //Console.WriteLine("Enter your Id:");
+                                        //string refCustomerId =Console.ReadLine();
+                                        //int customerID = 0;
+                                        //InvalidInputException.CheckIfInteger(refCustomerId, ref customerID);
 
 
-                                    Console.WriteLine("Enter Expiry Date");
-                                    DateTime expiry = Convert.ToDateTime(Console.ReadLine());
-                                    
-                                    DateTime start = DateTime.Now;
-                                    reserve = new Reservation() { CustomerId= customerID, VehicleId = vehicleID, Start = start, End = expiry };
-                                   int createReservationRows=  reservationServices.CreateReservation(reserve);
+                                        Console.WriteLine("Enter The vehicle Id you want to rent");
+                                        string refVehicleId = Console.ReadLine();
+                                        int vehicleID = 0;
+                                        //int vehicleId = Convert.ToInt32(Console.ReadLine());
+                                        InvalidInputException.CheckIfInteger(refVehicleId, ref vehicleID);
 
 
-                                    //if (createReservationRows == 1)
-                                    //OnReservationCreated();
+                                        Console.WriteLine("Enter Expiry Date");
+                                        DateTime expiry = Convert.ToDateTime(Console.ReadLine());
 
+                                        DateTime start = DateTime.Now;
+                                        reserve = new Reservation() { VehicleId = vehicleID, Start = start, End = expiry };
+                                        int createReservationRows = reservationServices.CreateReservation(reserve, user);
+
+
+                                        //if (createReservationRows == 1)
+                                        //OnReservationCreated();
+                                    }
+                                    catch(Exception ex)
+                                    {
+                                        Console.WriteLine(ex.Message);
+                                    }
 
                                     break;
                                 case 2:
@@ -230,14 +242,23 @@ namespace CarConnect
                                     }
                                     break;
                                 case 3:
-                                    Console.WriteLine("Enter Your resevation Id");
-                                    string refReservationId = Console.ReadLine();
-                                    int reservationID = 0;
-                                    InvalidInputException.CheckIfInteger(refReservationId, ref reservationID);
+                                    try
+                                    {
 
-                                    Reservation reserveDetails = new Reservation();
-                                    reserveDetails = reservationServices.GetReservation(reservationID);
-                                    Console.WriteLine(reserveDetails);
+
+                                        Console.WriteLine("Enter Your resevation Id");
+                                        string refReservationId = Console.ReadLine();
+                                        int reservationID = 0;
+                                        InvalidInputException.CheckIfInteger(refReservationId, ref reservationID);
+
+                                        Reservation reserveDetails = new Reservation();
+                                        reserveDetails = reservationServices.GetReservation(reservationID);
+                                        Console.WriteLine(reserveDetails);
+                                    }
+                                    catch(Exception ex)
+                                    {
+                                        Console.WriteLine(ex.Message);
+                                    }
                                     break;
                                 case 4:
                                     Console.WriteLine("Enter Your reservation ID to Remove");

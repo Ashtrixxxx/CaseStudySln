@@ -352,8 +352,30 @@ namespace CarConnect.Repository
 
         //Reservation Services made by Customer
 
-        public int CreateReservation(Reservation reservation)
+        public int CreateReservation(Reservation reservation,string user)
         {
+
+            int CustomerID = 0;
+            try
+            {
+                sqlCommand.Connection = sqlConnection;
+                sqlCommand.CommandText = "Select CustomerID from Customer where Username = @user";
+                sqlConnection.Open();
+                sqlCommand.Parameters.AddWithValue("@user", user);
+
+                CustomerID = (int)sqlCommand.ExecuteNonQuery();
+
+            }
+
+            catch (SqlException sqlex)
+            {
+                Console.WriteLine(sqlex.Message);
+            }
+            finally { sqlConnection.Close(); }
+
+
+
+
             int rows = 0;
             try
             {
@@ -369,7 +391,7 @@ namespace CarConnect.Repository
                 sqlCommand.Connection = sqlConnection;
                 //sqlCommand.CommandText = "INSERT INTO ReservationTable ( CustomerId, VehicleId, StartDate, EndDate) values (@customerId,@vehicleId,@start,@end)";
                 sqlConnection.Open();
-                sqlCommand.Parameters.AddWithValue("@customerId", reservation.CustomerId);
+                sqlCommand.Parameters.AddWithValue("@customerId", CustomerID);
                 sqlCommand.Parameters.AddWithValue("@vehicleId", reservation.VehicleId);
                 sqlCommand.Parameters.AddWithValue("@start", reservation.Start);
                 sqlCommand.Parameters.AddWithValue("@end", reservation.End);

@@ -18,12 +18,12 @@ namespace CarConnect.Services
        
         AdminImpl admin = new AdminImpl();
         CustomerImp customerImp = new CustomerImp();
-        public int CreateReservation(Reservation reserve)
+        public int CreateReservation(Reservation reserve,string user)
         {
             int rows = 0;
             try
             {
-               rows = customerImp.CreateReservation(reserve);
+               rows = customerImp.CreateReservation(reserve,user);
                 ReservationException.CheckIfVehicleInUse(rows);
 
             }
