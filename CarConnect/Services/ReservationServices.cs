@@ -31,6 +31,10 @@ namespace CarConnect.Services
             {
                 Console.WriteLine(ex);
             }
+            //catch(Exception ex1)
+            //{
+            //    Console.WriteLine(ex1.Message);
+            //}
 
             return rows;
         }
@@ -44,7 +48,7 @@ namespace CarConnect.Services
 
         public Reservation GetReservation(int id)
         {
-            return GetReservation(id);
+            return customerImp.GetReservation(id);
         }
         
         public int DeleteReservation(string user,int customerId) { 

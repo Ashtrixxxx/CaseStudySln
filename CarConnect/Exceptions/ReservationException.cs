@@ -15,7 +15,7 @@ namespace CarConnect.Exceptions
         {
             if(rows < 1)
             {
-                throw new ReservationException("The Vehicle you are trying to Reserve is currently in use");
+                throw new ReservationException("The Vehicle you are trying to Reserve is currently in use or not available");
             }
 
         }

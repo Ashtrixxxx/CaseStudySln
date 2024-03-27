@@ -14,6 +14,7 @@ namespace CarConnect.Services
         CustomerImp customerImp = new CustomerImp();
         public Customer GetDetailsByIdService(string user)
         {
+            
             return customerImp.GetCustomerDetailsById(user);
 
         }

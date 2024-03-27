@@ -101,6 +101,7 @@ namespace CarConnect.Repository
             {
                 Console.WriteLine(ex.Message);
             }
+            sqlConnection.Close();
 
             return customer;
         }
@@ -134,6 +135,7 @@ namespace CarConnect.Repository
             {
                 Console.WriteLine(ex.Message);
             }
+            sqlConnection.Close();
 
             return customer;
         }
@@ -151,6 +153,9 @@ namespace CarConnect.Repository
             sqlCommand.Parameters.AddWithValue("@name", name);
             sqlCommand.Parameters.AddWithValue("@username", username);
             int rows = sqlCommand.ExecuteNonQuery();
+            sqlCommand.Parameters.Clear();
+
+            sqlConnection.Close();
 
             return rows;
 
@@ -163,6 +168,10 @@ namespace CarConnect.Repository
             sqlConnection.Open();
 
             int rows = sqlCommand.ExecuteNonQuery();
+            sqlCommand.Parameters.Clear();
+
+            sqlConnection.Close();
+
             return rows;
         }
 
@@ -173,6 +182,10 @@ namespace CarConnect.Repository
             sqlConnection.Open();
 
             int rows = sqlCommand.ExecuteNonQuery();
+            sqlCommand.Parameters.Clear();
+
+            sqlConnection.Close();
+
             return rows;
         }
 
@@ -184,7 +197,9 @@ namespace CarConnect.Repository
             sqlCommand.Parameters.AddWithValue("@phone", phone);
             sqlCommand.Parameters.AddWithValue("@username", username);
             int rows = sqlCommand.ExecuteNonQuery();
+            sqlCommand.Parameters.Clear();
 
+            sqlConnection.Close();
             return rows;
 
         }
@@ -199,20 +214,39 @@ namespace CarConnect.Repository
             sqlCommand.Parameters.AddWithValue("@newUser", newUser);
             sqlCommand.Parameters.AddWithValue("@username", username);
             int rows = sqlCommand.ExecuteNonQuery();
+            sqlCommand.Parameters.Clear();
+
+            sqlConnection.Close();
 
             return rows;
         }
 
         public int updatePassword(string username, string password)
         {
-            sqlCommand.Connection = sqlConnection;
-            sqlCommand.CommandText = "Update Customer set Password = @name where Username = @username";
-            sqlConnection.Open();
-            sqlCommand.Parameters.AddWithValue("@name", password);
-            sqlCommand.Parameters.AddWithValue("@username", username);
-            int rows = sqlCommand.ExecuteNonQuery();
+            int rows = 0;
+            try
+            {
+                sqlCommand.Connection = sqlConnection;
+                sqlCommand.CommandText = "Update Customer set Password = @name where Username = @username";
+                sqlConnection.Open();
+                sqlCommand.Parameters.AddWithValue("@name", password);
+                sqlCommand.Parameters.AddWithValue("@username", username);
+                 rows = sqlCommand.ExecuteNonQuery();
+                sqlCommand.Parameters.Clear();
 
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            finally
+            {
+                
+                sqlConnection.Close();
+            }
             return rows;
+            
 
         }
 
@@ -231,6 +265,8 @@ namespace CarConnect.Repository
                 sqlCommand.Parameters.AddWithValue("@id", vehicleId);
 
                 SqlDataReader reader = sqlCommand.ExecuteReader();
+                sqlCommand.Parameters.Clear();
+
                 while (reader.Read())
                 {
                     vehicle.VehicleId = (int)reader["VehicleID"];
@@ -250,6 +286,10 @@ namespace CarConnect.Repository
             {
                 Console.WriteLine(ex.StackTrace);
             }
+            finally
+            {
+                sqlConnection.Close();
+            }
 
             return vehicle;
         }
@@ -259,7 +299,6 @@ namespace CarConnect.Repository
 
             List<Vehicle> vehicles = new List<Vehicle>();
 
-            Vehicle vehicle = new Vehicle();
             try
             {
                 sqlCommand.Connection = sqlConnection;
@@ -268,8 +307,12 @@ namespace CarConnect.Repository
 
 
                 SqlDataReader reader = sqlCommand.ExecuteReader();
+                sqlCommand.Parameters.Clear();
+
                 while (reader.Read())
                 {
+                    Vehicle vehicle = new Vehicle();
+
                     vehicle.VehicleId = (int)reader["VehicleID"];
                     vehicle.Make = (string)reader["Make"];
                     vehicle.Model = (string)reader["Model"];
@@ -362,8 +405,14 @@ namespace CarConnect.Repository
                 sqlCommand.CommandText = "Select CustomerID from Customer where Username = @user";
                 sqlConnection.Open();
                 sqlCommand.Parameters.AddWithValue("@user", user);
-
-                CustomerID = (int)sqlCommand.ExecuteNonQuery();
+                SqlDataReader r = sqlCommand.ExecuteReader();
+                while (r.Read())
+                {
+                    CustomerID =(int) r["CustomerID"];
+                }
+                
+                sqlCommand.Parameters.Clear();
+                //Console.WriteLine(CustomerID);
 
             }
 
@@ -375,13 +424,13 @@ namespace CarConnect.Repository
 
 
 
-
             int rows = 0;
-            try
-            {
+           
 
                 sqlCommand.CommandText = @"
                 IF NOT EXISTS (SELECT 1 FROM ReservationTable WHERE VehicleId = @VehicleId)
+                AND EXISTS (SELECT 1 FROM Vehicle WHERE VehicleId = @VehicleId AND Availability = 1)
+
                 BEGIN
                 INSERT INTO ReservationTable (CustomerId, VehicleId, StartDate, EndDate) VALUES (@customerId, @vehicleId, @start, @end)
                 END";
@@ -395,19 +444,18 @@ namespace CarConnect.Repository
                 sqlCommand.Parameters.AddWithValue("@vehicleId", reservation.VehicleId);
                 sqlCommand.Parameters.AddWithValue("@start", reservation.Start);
                 sqlCommand.Parameters.AddWithValue("@end", reservation.End);
-
                 rows = sqlCommand.ExecuteNonQuery();
-                OnReservationCreated();
-                Console.WriteLine(rows);
-            }
-            catch (SqlException ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            finally
-            {
-                sqlConnection.Close();
-            }
+                if (rows > 0)
+                {
+                    OnReservationCreated();
+                }
+                //Console.WriteLine(rows);
+            sqlCommand.Parameters.Clear();
+
+
+
+            sqlConnection.Close();
+            
             return rows;
         }
 
@@ -427,12 +475,15 @@ namespace CarConnect.Repository
                 {
                     id = Convert.ToInt32(r["CustomerID"]);
                 }
+                sqlCommand.Parameters.Clear();
+
 
             }
             catch (SqlException sqlexx)
             {
                 Console.WriteLine(sqlexx.StackTrace);
             }
+            sqlConnection.Close();
 
 
             try
@@ -443,6 +494,8 @@ namespace CarConnect.Repository
                 sqlCommand.Parameters.AddWithValue("@id", id);
 
                 SqlDataReader reader = sqlCommand.ExecuteReader();
+                sqlCommand.Parameters.Clear();
+
                 while (reader.Read())
                 {
                     Reservation reservation = new Reservation();
@@ -460,6 +513,7 @@ namespace CarConnect.Repository
             {
                 Console.WriteLine(ex.Message);
             }
+            sqlConnection.Close();
             return reservations;
         }
 
@@ -474,6 +528,7 @@ namespace CarConnect.Repository
                 sqlCommand.Parameters.AddWithValue("@id", id);
 
                 SqlDataReader reader = sqlCommand.ExecuteReader();
+                sqlCommand.Parameters.Clear();
                 while (reader.Read())
                 {
                     reservation.CustomerId = (int)reader["CustomerID"];
@@ -515,6 +570,8 @@ namespace CarConnect.Repository
                 {
                     id = Convert.ToInt32(r["CustomerID"]);
                 }
+                sqlCommand.Parameters.Clear();
+
 
             }
             catch (SqlException sqlexx)
@@ -531,6 +588,7 @@ namespace CarConnect.Repository
                 rows = sqlCommand.ExecuteNonQuery();
 
 
+                sqlCommand.Parameters.Clear();
 
             }
             catch (SqlException sqlex)
